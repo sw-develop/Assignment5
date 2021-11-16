@@ -1,7 +1,5 @@
 from datetime                import timedelta, date
-from drf_yasg                import openapi
 from drf_yasg.utils          import swagger_auto_schema
-from drf_yasg.openapi        import Parameter
 from django.utils.decorators import method_decorator
 from rest_framework.generics import RetrieveAPIView
 
@@ -77,7 +75,9 @@ class SearchResearchView(ListAPIView):
     }
 ))
 class RecentListView(ListAPIView):
-    queryset         = ResearchInformation.objects.filter(updated_at__range = [date.today() - timedelta(days = 7), date.today()])
     serializer_class = ResearchInformationSerializer
     filter_backends  = [OrderingFilter]
     ordering         = ['-updated_at']
+
+    def get_queryset(self):
+        return ResearchInformation.objects.filter(updated_at__range = [date.today() - timedelta(days = 7), date.today()])
