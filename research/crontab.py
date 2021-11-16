@@ -3,15 +3,12 @@ import sys
 
 from linetimer       import CodeTimer
 
-from research.models import ResearchInformation 
+from research.batch import batch_task
 from utils           import retry
 
 
 logger = logging.getLogger('batch')
 
-def test_func():
-    for i in range(10000000):
-        pass
 
 @retry(total_try_cnt=5, sleep_in_sec=5, retryable_exceptions=(OSError, ValueError), log=logger)
 def start_batch():
@@ -20,7 +17,7 @@ def start_batch():
     ct = CodeTimer(unit='s')
 
     with ct:
-        test_func()
+        batch_task()
 
     logger.info(f"[{func_name}] Success batch job [took:{ct.took:.2f}{ct.unit}]")
     return True
