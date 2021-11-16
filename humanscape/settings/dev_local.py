@@ -1,29 +1,31 @@
+import json
 import pathlib
 
 from .base import *
-
 
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'secrect_key')
-
-OPEN_API_AUTH_KEY = os.environ.get('OPEN_API_AUTH_KEY', 'auth_key')
-
-OPEN_API_SERVICE_KEY = os.environ.get('OPEN_API_SERVICE_KEY', 'service_key')
+# 환경설정 파일을 불러온다.
+try:
+    with open(os.path.join(BASE_DIR, 'env/.env.dev_local.json'), "r", encoding='utf-8') as file:
+        envs         = json.loads(file.read())
+        SECRET_KEY   = envs.get('DJANGO_SECRET_KEY', 'secrect_key')
+        OPEN_API_KEY = envs.get('OPEN_API_KEY', 'secrect_key')
+except IOError as e:
+    raise ImproperlyConfigured('env file not exist...')
 
 LOGGING_BATCH_PATH = os.path.join(BASE_DIR, 'log/batch/batch.log')
 LOGGING_COMMON_PATH = os.path.join(BASE_DIR, 'log/common/batch.log')
 
-SERVER_EMAIL = "notification@assignment5.com"
-
 CRONJOBS = [
-        ('*/1 * * * *', 'research.crontab.start_batch', ),
+        ('* 0 * * *', 'research.crontab.start_batch', ),
 ]
 
 CRONTAB_DJANGO_SETTINGS_MODULE = 'humanscape.settings.dev_local'
 
+# Log의 경로 폴더를 만든다.
 pathlib.Path(os.path.dirname(LOGGING_BATCH_PATH)).mkdir(parents=True, exist_ok=True)
 pathlib.Path(os.path.dirname(LOGGING_COMMON_PATH)).mkdir(parents=True, exist_ok=True)
 
@@ -54,7 +56,6 @@ LOGGING = {
             'filename': LOGGING_COMMON_PATH,
             'formatter': 'format',
         },
-
     },
 
     'loggers': {
@@ -62,7 +63,7 @@ LOGGING = {
             'handlers': ['batchfile'],
             'level': 'INFO',
         },
-         'research': {
+         'common': {
             'handlers': ['commonfile'],
             'level': 'INFO',
         },

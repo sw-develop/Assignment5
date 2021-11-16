@@ -1,15 +1,16 @@
+import sys
 import datetime
+import logging
 import requests
-
 from dataclasses import dataclass
-from typing import Set, Tuple
-from django.db import transaction
+from typing      import Set, Tuple
 
-from humanscape.settings.base import get_env_variable
-from research.models import ResearchInformation
+from django.db   import transaction
+from django.conf import settings
+
+from research.models      import ResearchInformation
 from research.serializers import DataResearchSerializer
-from research.utils import *
-
+from research.utils       import *
 
 @dataclass(frozen=True)
 class DataResearch:
@@ -26,8 +27,8 @@ class DataResearch:
 
 def get_data_from_open_api(page_size=10) -> Set[DataResearch]:
     url = f"https://api.odcloud.kr/api/3074271/v1/uddi:cfc19dda-6f75-4c57-86a8-bb9c8b103887?perPage={page_size}"
-    # open_api_key = get_env_variable('OPEN_API_KEY')
-    open_api_key = "T6s//nbyXCowhkCB2p7gIX/+eSGn1PT6DppCYV9Ulvg0+cdykw2JQ5w/iwadFVWyE+CgjXZjSHi/auU1E+hG3w=="
+    
+    open_api_key = settings.OPEN_API_KEY
     headers = {
         "Authorization": f"Infuser {open_api_key}"
     }
@@ -83,24 +84,36 @@ def divide_target(
 
     return researches_for_insert, researches_for_update_or_delete
 
+logger = logging.getLogger('batch')
 
 @transaction.atomic()
 def batch_task():
+    func_name = sys._getframe().f_code.co_name
+
     update_fields = [
         'name', 'period', 'range', 'code',
         'institute', 'stage', 'target_number', 'office', 'updated_at'
     ]
 
+    logger.info(f"[{func_name}] Start get_data_from_open_api")
     set_from_open = get_data_from_open_api(page_size=100000)
+    
+    logger.info(f"[{func_name}] Start get_data_from_db")
     set_from_db = get_data_from_db()
 
+    logger.info(f"[{func_name}] Check items for Create, Udate, Delete]")
     researches_for_insert, researches_for_update = divide_target(set_from_open, set_from_db)
     _, researches_for_delete = divide_target(set_from_open, set_from_db, for_delete=True)
 
+    logger.info(f"[{func_name}] Create itmes to db [totoal: {len(researches_for_insert)}]")
     ResearchInformation.objects.bulk_create(researches_for_insert)
+ 
+    logger.info(f"[{func_name}] Update itmes to db [totoal: {len(researches_for_update)}]")
     ResearchInformation.objects.bulk_update(researches_for_update, update_fields)
 
     ids_for_delete = [i.id for i in researches_for_delete]
+
+    logger.info(f"[{func_name}] Delete itmes to db [totoal: {len(ids_for_delete)}]")
     ResearchInformation.objects.filter(id__in=ids_for_delete).delete()
 
-    return
+    return True

@@ -487,3 +487,5 @@ zsdoc/data
 log/*
 
 static
+# env
+env
