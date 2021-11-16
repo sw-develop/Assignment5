@@ -4,7 +4,6 @@ import functools
 
 
 def retry(total_try_cnt=5, sleep_in_sec=5, retryable_exceptions=(), log=logging.getLogger()):
-
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -18,10 +17,10 @@ def retry(total_try_cnt=5, sleep_in_sec=5, retryable_exceptions=(), log=logging.
                         return result
 
                 except retryable_exceptions as e:
-                    log.warning(f'[{func.__name__}] {e}')
+                    log.warning(f'[{func.__name__}] {e} {type(e)}')
                 
                 except Exception as e:
-                    log.warning(f'[{func.__name__}] {e}')
+                    log.warning(f'[{func.__name__}] {e} {type(e)}')
 
                 time.sleep(sleep_in_sec)
 
