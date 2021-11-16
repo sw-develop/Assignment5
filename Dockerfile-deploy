@@ -3,5 +3,5 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR  /usr/src/app
 COPY requirements.txt /usr/src/app
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends gcc
+RUN apt-get install -y --no-install-recommends gcc cron
 RUN pip install -r requirements.txt

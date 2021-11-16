@@ -8,14 +8,14 @@ services:
     restart: always 
     environment: 
       DJANGO_SETTINGS_MODULE: humanscape.settings.deploy
-    env_file: 
-      - .dockerenv.deploy.backend
     command: 
       - bash 
       - -c 
       - | 
         python manage.py migrate
         echo yes | python manage.py collectstatic
+        python manage.py crontab remove
+        python manage.py crontab add
         gunicorn humanscape.wsgi:application --bind 0.0.0.0:8000
     volumes: 
       - .:/usr/src/app/ 
