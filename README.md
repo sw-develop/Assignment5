@@ -11,7 +11,7 @@
 |-------|-------------------------|--------------------|
 |고유영 |[lunayyko](https://github.com/lunayyko)     | |
 |박지원 |[jiwon5304](https://github.com/jiwon5304)   | |
-|최신혁 |[shchoi94](https://github.com/shchoi94)     | |
+|최신혁 |[shchoi94](https://github.com/shchoi94)     | batch task 로직 구현|
 |박세원 |[sw-develop](https://github.com/sw-develop) | |
 
 ## 과제 내용
@@ -102,7 +102,22 @@
 [링크-Swagger](http://18.188.189.173:8041/swagger/)
 
 ## 구현 기능
-
+- batch task   
+  - 과제 번호를 identifier로 가정히여   
+  open api의 리스폰스 기반으로 데이터베이스에 데이터 추가, 수정, 삭제 기능을 구현하였습니다.
+     
+  - 'eq', 'hash' 매직메소드를 직접 구현하지 않고 set이 사용가능한   
+    dataclass, 값 객체를 정의하였습니다.
+    ```
+    @dataclass(frozen=True)
+    class DataResearch:
+        name: str
+        number: str
+        period: str
+        ...
+    ```
+  - db 데이터와 open api 데이터를 각각 dataclass, 값 객체로 매핑 후, 데이터를 비교하여   
+    데이터를 데이터베이스에 추가, 수정, 삭제되도록 하였습니다.
 
 ## 배포정보
 ---
