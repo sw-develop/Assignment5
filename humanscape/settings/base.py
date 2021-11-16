@@ -43,6 +43,7 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'debug_toolbar',
     'django_filters',
+    'django_crontab',
 
 ]
 
