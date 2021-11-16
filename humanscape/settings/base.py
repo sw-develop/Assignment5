@@ -32,7 +32,7 @@ def get_env_variable(var_name):
 # Application definition
 PROJECT_APPS = [
     'research',
-
+    'commands',
 ]
 
 
