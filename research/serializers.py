@@ -7,7 +7,7 @@ class ResearchInformationSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResearchInformation
         fields = "__all__"
-
+        lookup = 'number'
 
 class DataResearchSerializer(serializers.ModelSerializer):
     class Meta:
