@@ -485,3 +485,5 @@ zsdoc/data
 
 #logging
 log/*
+
+static
