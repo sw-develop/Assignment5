@@ -1,0 +1,9 @@
+from rest_framework import serializers
+
+from .models import ResearchInformation
+
+class ResearchInformationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ResearchInformation
+        fields = "__all__"

@@ -57,6 +57,11 @@ INSTALLED_APPS = [
 
 ] + THIRD_PARTY_APPS + PROJECT_APPS
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
+    'PAGE_SIZE': 100
+}
+
 
 THIRD_PARTY_MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',

@@ -37,6 +37,5 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', swagger_schema_view.without_ui(cache_timeout=0), name="schema-json"),
     re_path(r'^swagger/$', swagger_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('__debug__/', include(debug_toolbar.urls)),
+    path('researches', include('research.urls')),
 ]
-
-
