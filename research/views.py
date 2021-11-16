@@ -1,10 +1,12 @@
+from datetime import timedelta, date
+
 from django_filters.rest_framework  import DjangoFilterBackend
 from rest_framework.filters         import OrderingFilter, SearchFilter
 from rest_framework.generics        import RetrieveAPIView, ListAPIView
 
-from research.models    import ResearchInformation
-from .filters           import ResearchFilter
-from .serializers       import ResearchInformationSerializer
+from .models       import ResearchInformation
+from .filters      import ResearchFilter
+from .serializers  import ResearchInformationSerializer
 
 
 class ResearchRetrieveView(RetrieveAPIView):
@@ -20,3 +22,10 @@ class SearchResearchView(ListAPIView):
     filterset_class     = ResearchFilter
     ordering            = ['-updated_at']
     search_fields       = ['name', 'number', 'range', 'code', 'institute', 'stage', 'office']
+
+
+class RecentListView(ListAPIView):
+    queryset         = ResearchInformation.objects.filter(updated_at__range = [date.today() - timedelta(days = 7), date.today()])
+    serializer_class = ResearchInformationSerializer
+    filter_backends  = [OrderingFilter]
+    ordering         = ['-updated_at']
