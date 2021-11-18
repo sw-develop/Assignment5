@@ -1,6 +1,6 @@
 # Assignment5
 
-원티드x위코드 백엔드 프리온보딩 과제4
+원티드x위코드 백엔드 프리온보딩 과제5
 - 과제 출제 기업 정보
   - 기업명 : 휴먼스케이프
     - [휴먼스케이프 사이트](https://humanscape.io/kr/index.html)
