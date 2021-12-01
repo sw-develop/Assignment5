@@ -1,21 +1,19 @@
-# Assignment5
+# 원티드x위코드 백엔드 프리온보딩 프로젝트 #5
 
-원티드x위코드 백엔드 프리온보딩 과제5
-- 과제 출제 기업 정보
-  - 기업명 : 휴먼스케이프
-    - [휴먼스케이프 사이트](https://humanscape.io/kr/index.html)
-    - [wanted 채용공고 링크](https://www.wanted.co.kr/wd/41413)
+해당 프로젝트는 원티드X위코드 프리온보딩 백엔드 코스에서 수행한 **휴먼스케이프**의 기업 과제 입니다.
 
 ## Members
 | 이름 | github                                     | 담당 기능                 |
 |-----|--------------------------------------------|-------------------------|
-|김태우 |[jotasic](https://github.com/jotasic)       | batch 자동화 기능 구현      |
-|고유영 |[lunayyko](https://github.com/lunayyko)     | 상세 임상정보 조회 API, 스웨거|
-|박지원 |[jiwon5304](https://github.com/jiwon5304)   | 최근 임상정보 조회 API, 배포 |
-|최신혁 |[shchoi94](https://github.com/shchoi94)     | batch task 로직 구현      |
-|박세원 |[sw-develop](https://github.com/sw-develop) | 검색 임상정보 조회 API      |
+|박세원 |[sw-develop](https://github.com/sw-develop) | 임상정보 검색 API 및 필터링 기능 구현, Unit Test 코드 작성|
 
-## 과제 내용
+## 구현 조건 내용
+
+<details>
+<summary><b>구현 조건 자세히 보기</b></summary>
+<div markdown="1">
+  
+  
 ### **[필수 포함 사항]**
 
 - READ.ME 작성
@@ -91,6 +89,10 @@
     
     ```
 
+  
+</div>
+</details>
+
 
 ## 사용 기술 및 tools
 > - Back-End :  <img src="https://img.shields.io/badge/Python 3.8-3776AB?style=for-the-badge&logo=Python&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Django 3.2-092E20?style=for-the-badge&logo=Django&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/sqlite-0064a5?style=for-the-badge&logo=sqlite&logoColor=white"/>&nbsp;
@@ -120,84 +122,7 @@
 [링크-Swagger](http://ec2-3-35-166-14.ap-northeast-2.compute.amazonaws.com:8000/swagger/)
 
 ## 구현 기능
-### 1. batch task   
-  - 과제 번호를 identifier로 가정히여   
-  open api의 리스폰스 기반으로 데이터베이스에 데이터 추가, 수정, 삭제 기능을 구현하였습니다.
-     
-  - 'eq', 'hash' 매직메소드를 직접 구현하지 않고 set이 사용가능한   
-    dataclass, 값 객체를 정의하였습니다.
-    ```
-    @dataclass(frozen=True)
-    class DataResearch:
-        name: str
-        number: str
-        period: str
-        ...
-    ```
-  - db 데이터와 open api 데이터를 각각 dataclass, 값 객체로 매핑 후, 데이터를 비교하여   
-    데이터를 데이터베이스에 추가, 수정, 삭제되도록 하였습니다.
-
-### 2. batch 자동화 기능 (django-crontab)
-#### 기능 구현 방식
- - django-crontab을 이용해서 하루 단위로 batch task를 실행 할 수 있도록 하였습니다.
- ```python
- CRONJOBS = [
-        ('* 0 * * *', 'research.crontab.start_batch', ),
-]
- ```
-  
-  
- #### batch 기능에 대한 이력 작업
-   - 백그라운드에서 구동되는 작업이기 때문에, 관리자가 batch task가 정상 동작했는지, 실패했는지 알 수 있는 방법이 없다고 생각하였고, 알 수 있기 위해서 Log를 남겨야겠다고 생각했습니다.
-    
-   ```text
-    [17/Nov/2021 01:22:01] INFO [utils.py:12] [start_batch] trying [1/5]
-    [17/Nov/2021 01:22:01] INFO [batch.py:98] [batch_task] Start get_data_from_open_api
-    [17/Nov/2021 01:22:01] INFO [batch.py:101] [batch_task] Start get_data_from_db
-    [17/Nov/2021 01:22:01] INFO [batch.py:104] [batch_task] Check items for Create, Udate, Delete]
-    [17/Nov/2021 01:22:01] INFO [batch.py:108] [batch_task] Create new itmes to db [total: 145]
-    [17/Nov/2021 01:22:01] INFO [batch.py:111] [batch_task] Update new itmes to db [total: 0]
-    [17/Nov/2021 01:22:01] INFO [batch.py:116] [batch_task] Delete new itmes to db [total: 0]
-    [17/Nov/2021 01:22:01] INFO [crontab.py:21] [start_batch] Success batch job [took:0.24s]
-    
-    [17/Nov/2021 01:23:01] INFO [utils.py:12] [start_batch] trying [1/5]
-    [17/Nov/2021 01:23:01] INFO [batch.py:98] [batch_task] Start get_data_from_open_api
-    [17/Nov/2021 01:23:01] INFO [batch.py:101] [batch_task] Start get_data_from_db
-    [17/Nov/2021 01:23:01] INFO [batch.py:104] [batch_task] Check items for Create, Udate, Delete]
-    [17/Nov/2021 01:23:01] INFO [batch.py:108] [batch_task] Create new itmes to db [total: 1]
-    [17/Nov/2021 01:23:01] INFO [batch.py:111] [batch_task] Update new itmes to db [total: 0]
-    [17/Nov/2021 01:23:01] INFO [batch.py:116] [batch_task] Delete new itmes to db [total: 0]
-    [17/Nov/2021 01:23:01] INFO [crontab.py:21] [start_batch] Success batch job [took:0.13s]
-   ```
-   
-   - 만약 LOG LEVEL이 ERROR일 경우 관리자에게 이메일을 보내도록 설정하였습니다.(deploy 환경일 경우만 동작합니다)
-   - 설정 방법은 `설치 및 실행 방법 - 배포용`을 참고해 주시기 바랍니다. 
-   ![image](https://user-images.githubusercontent.com/8219812/142047477-984d31aa-be61-4fd7-a51e-0e08b4b1a1d1.png)
-
-
-
-### 3. 특정 임상정보 조회 API
-- 연구 데이터를 상세 조회합니다.
-- 연구번호 값을 기준으로 해당 데이터를 조회합니다.
-
-
-### 4. 최근 업데이트 임상정보 조회 API
-- 최근 일주일의 연구데이터를 조회합니다. 조회일을 기준으로 7일 전의 데이터까지 총 8일(조회일 포함)의 데이터를 보여줍니다.
-- 최근 리스트를 조회하기 위해 "updated_at" 필드에 range[-7:0] 필터링을 적용하여 RecentListView 클래스를 구현하였습니다.
-
-   ```bash
-    ResearchInformation.objects.filter(updated_at__range = [date.today() - timedelta(days = 7), date.today()])
-    ```
-- Pagination
-  - Cursor Pagination을 적용하였고, 기본 100개의 정보를 조회하도록 구현하였습니다.
-- Ordering
-  - 최근 업데이트 된 날짜를 우선으로 정렬하여 데이터가 반환되도록 구현하였습니다.
-- Pagination & Ordering 은 검색 API 와 동일하게 적용합니다.
-- ex) 2021.11.17일 데이터 조회 -> 2021.11.17 ~ 10일까지의 데이터 중 최근 날짜를 우선으로 반환하게 됩니다.
-
-
-
-### 5. 임상정보 검색 API
+### 임상정보 검색 & 필터링 API
 - 구현 방식
   - 각 필드별 구체적인 필터링 기능을 구현하기 위해 django-filter 라이브러리기반 FilterSet을 상속한 새로운 ResearchFilter 클래스를 구현하였습니다. 
 - Search
@@ -214,7 +139,6 @@
   ![image](https://user-images.githubusercontent.com/80395324/142041639-d01cbc59-214c-417b-bddd-0d51b36ea498.png)
 
 ## 배포정보
----
 |구분   |  정보          |비고|
 |-------|----------------|----|
 |배포플랫폼 | AWS EC2    |    |
@@ -226,6 +150,12 @@
 
 
 ## 설치 및 실행 방법
+
+<details>
+<summary><b>Local 개발 및 테스트용</b></summary>
+<div markdown="1">
+  
+  
 ###  Local 개발 및 테스트용
 
 1. 해당프로젝트를 clone 하고, 프로젝트 폴더로 들어간다.
@@ -264,6 +194,16 @@
     python manage.py runserver 0.0.0.0:8000
     ```
 
+
+</div>
+</details>
+
+  
+<details>
+<summary><b>배포용</b></summary>
+<div markdown="1">
+  
+  
 ###  배포용 
 1. 해당프로젝트를 clone 하고, 프로젝트 폴더로 들어간다.
   ```bash
@@ -311,17 +251,30 @@
     docker-compose -f docker-compose-deploy.yml up -d
     ```
 
+</div>
+</details>
+
+
+<details>
+<summary><b>참고 임상정보 open API Key</b></summary>
+<div markdown="1">
+  
+  
 ### 참고 임상정보 open API Key
 1. [임상정보 open API](https://www.data.go.kr/data/3074271/fileData.do#/API%20%EB%AA%A9%EB%A1%9D/GETuddi%3Acfc19dda-6f75-4c57-86a8-bb9c8b103887) 에서 활용 신청을 클릭해서 신청을 진행합니다.
-![스크린샷 2021-11-17 오전 4 01 09](https://user-images.githubusercontent.com/8219812/142048791-3f609654-51aa-4606-8eaa-ac1e51476bd4.png)
+![스크린샷 2021-11-17 오전 4 01 09](https://user-images.githubusercontent.com/8219812/142048791-3f609654-51aa-4606-8eaa-ac1e51476bd4.png)
 
 
 2. 신청을 진행하시면 자동으로 신청이 완료되며, 마이페이지로 가시면 신청하신 API List가 있는데, `질병관리청_임상연구 과제정보`를 클릭합니다.
 ![image](https://user-images.githubusercontent.com/8219812/142049022-769ae22c-9816-425b-8bb8-ded717984014.png)
 
 3. 아래와 같은 정보들이 나오는데, 필요한 값은 `일반 인증키 (decoding)` 입니다. 이 값을 설정 파일에 OPEN_API_KEY에 적용하시면 됩니다.
-![스크린샷 2021-11-17 오전 3 59 36](https://user-images.githubusercontent.com/8219812/142049135-1073fb23-b254-48a4-a3ab-74a1e075a9dc.png)
- 
+![스크린샷 2021-11-17 오전 3 59 36](https://user-images.githubusercontent.com/8219812/142049135-1073fb23-b254-48a4-a3ab-74a1e075a9dc.png)
+
+  
+</div>
+</details>
+
 
 ## 폴더 구조
 ```bash
